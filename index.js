@@ -13,14 +13,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/events", (req, res) => {
-  console.log("res", db);
-
   res.json({
     message: JSON.stringify(req.body),
   });
 });
 
-app.post("/events", (req, res) => {
+app.post("/event", (req, res) => {
   var users = [],
     id,
     data;
