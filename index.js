@@ -1,6 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const { getDocs, collection, setDoc, doc } = require("firebase/firestore");
+const {
+  getDocs,
+  collection,
+  setDoc,
+  doc,
+  addDoc,
+} = require("firebase/firestore");
 
 const app = express();
 const db = require("./firebase");
@@ -18,11 +24,11 @@ app.get("/events", (req, res) => {
   });
 });
 
-app.post("/event", (req, res) => {
+app.post("/event", async (req, res) => {
   var users = [],
     id,
     data;
-  getDocs(collection(db, "userData")).then((snapshot) => {
+  getDocs(collection(db, "userData")).then(async (snapshot) => {
     snapshot.docs.every((doc) => {
       data = doc.data();
       if (data.user_id === req.body.user_id) {
@@ -30,12 +36,21 @@ app.post("/event", (req, res) => {
         users.push(data);
         return false;
       }
-      console.log("first");
       return true;
     });
-    console.log("data", data);
+    console.log("data", data, users);
     let resultCodes = [];
     let amount = parseFloat(req.body.amount);
+    if (users.length === 0) {
+      data = { user_id: req.body.user_id, amount: [] };
+      users.push(data);
+      const docRef = await addDoc(collection(db, "userData"), data);
+      console.log("Document written with ID: ", docRef.id);
+      id = docRef.id;
+      console.log("Document written with ID: ", docRef.id);
+      id = docRef.id;
+    }
+    console.log("data2", data, users);
 
     amount = req.body.type === "deposit" ? amount : -1 * amount;
     let amountArr = users[0].amount;
@@ -93,7 +108,6 @@ app.post("/event", (req, res) => {
       },
     });
   });
-  console.log("users3", users);
 });
 
 app.listen(5000, () => {
