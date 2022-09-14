@@ -38,19 +38,14 @@ app.post("/event", async (req, res) => {
       }
       return true;
     });
-    console.log("data", data, users);
     let resultCodes = [];
     let amount = parseFloat(req.body.amount);
     if (users.length === 0) {
       data = { user_id: req.body.user_id, amount: [] };
       users.push(data);
       const docRef = await addDoc(collection(db, "userData"), data);
-      console.log("Document written with ID: ", docRef.id);
-      id = docRef.id;
-      console.log("Document written with ID: ", docRef.id);
       id = docRef.id;
     }
-    console.log("data2", data, users);
 
     amount = req.body.type === "deposit" ? amount : -1 * amount;
     let amountArr = users[0].amount;
